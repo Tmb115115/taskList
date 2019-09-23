@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tasklist.tasklist">
+
+    <application
+        android:name="org.litepal.LitePalApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/tubiao"
+        android:label="任务管理器"
+        android:roundIcon="@mipmap/tubiao"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".item.CalendarActivity"></activity>
+        <activity android:name=".EditActivity"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

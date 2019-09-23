@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/date"
+                android:icon="@mipmap/task"
+                android:title="日期选择"/>
+            <item
+                android:id="@+id/today"
+                android:icon="@mipmap/task"
+                android:title="今日计划"/>
+            <item
+                android:id="@+id/tomorrow"
+                android:icon="@mipmap/task"
+                android:title="明日计划"/>
+            <item
+                android:id="@+id/month"
+                android:icon="@mipmap/task"
+                android:title="本月计划"/>
+
+            <item
+                android:id="@+id/done"
+                android:icon="@mipmap/task"
+                android:title="已完成计划"/>
+            <item
+                android:id="@+id/to_do"
+                android:icon="@mipmap/task"
+                android:title="未完成计划"/>
+        </group>
+</menu>
