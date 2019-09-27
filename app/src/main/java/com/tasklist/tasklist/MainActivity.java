@@ -276,23 +276,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try{
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Calendar calendar =Calendar.getInstance();//获取今天的日期
-                        calendar.add(Calendar.MONTH,1);//month+1
-                        String str = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));//将int转化为String
-                        String str2 = String.valueOf(calendar.get(Calendar.MONTH));//将int转化为String
-                        String str3 = String.valueOf(calendar.get(Calendar.YEAR));//将int转化为String
-                        plan = LitePal.where("year = ? and month = ? and Day <= ? and isCompleted = ?",str3,str2,str,"0").find(Plan2.class);//从数据库查找数据
-                        String str4 = String.valueOf(plan.size());
-                        sum.setText(str4);//总任务数
-                        adapter = new PlanAdapter2(plan);
-                        recyclerView.setAdapter(adapter);
+                        loadBack();
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });

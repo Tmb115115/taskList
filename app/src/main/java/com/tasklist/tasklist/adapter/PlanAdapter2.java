@@ -1,9 +1,9 @@
 package com.tasklist.tasklist.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,30 +11,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tasklist.tasklist.EditActivity;
 import com.tasklist.tasklist.IItemTouchHelperAdapter;
 import com.tasklist.tasklist.MainActivity;
 import com.tasklist.tasklist.R;
-import com.tasklist.tasklist.entity.Plan;
 import com.tasklist.tasklist.entity.Plan2;
 
 import org.litepal.LitePal;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implements IItemTouchHelperAdapter {
         private Context context;
         private List<Plan2> plan;
-        public PlanAdapter2(Context context,List<Plan2> plan){
+        private int flag;
+    private OnItemClickListener onItemClickListener;
+    public PlanAdapter2(List<Plan2> plan){
         this.plan = plan;
-        this.context = context;
         }
         public static class VH extends RecyclerView.ViewHolder{
             public final CheckBox checkBox;
@@ -59,8 +56,15 @@ public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implemen
             vh.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context,MainActivity.class);
-                    context.startActivity(intent);
+                    Intent intent = new Intent(v.getContext(), EditActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("flag",0x00000006);
+                    bundle.putString("title",plan.get(i).getTitle());
+                    bundle.putString("text",plan.get(i).getText());
+                    intent.putExtras(bundle);
+                    v.getContext().startActivity(intent);
+                    Activity activity = (Activity) v.getContext();
+                    activity.finish();
                 }
             });
             vh.checkBox.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +77,6 @@ public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implemen
                     else {
                         plan.get(i).setIsCompleted(false);
                         plan.get(i).save();
-                        Log.d("PlanAdapter2","77777777");
                     }
                 }
             });
@@ -113,4 +116,13 @@ public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implemen
         notifyItemRemoved(position);
 
     }
+    //定义点击接口
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+    //点击方法
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.onItemClickListener = onItemClickListener;
+    }
+
 }

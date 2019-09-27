@@ -1,11 +1,14 @@
 package com.tasklist.tasklist.item;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CalendarView;
 import android.widget.TextView;
 
@@ -32,6 +35,11 @@ public class CalendarActivity extends AppCompatActivity {
         title.setText("日期选择");
         cv = (CalendarView)findViewById(R.id.calendarview);
         ActionBar actionBar = getSupportActionBar();
+        if (Build.VERSION.SDK_INT>=21){
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+        }
         if (actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);//将返回按钮显示出来
         }
