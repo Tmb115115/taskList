@@ -36,7 +36,7 @@ import okhttp3.Response;
 
 public class EditActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    private TextView toolbartitle;
+    private TextView toolbartitle;//标题
     private FloatingActionButton fab;
     private EditText editText1;
     private EditText editText2;
@@ -49,8 +49,8 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        ActivityCollector.addActivity(this);
-        final Bundle bundle = getIntent().getExtras();
+        ActivityCollector.addActivity(this);//将活动添加到活动管理器
+        final Bundle bundle = getIntent().getExtras();//获取数据
         if (bundle !=null){
             flag2 = bundle.getInt("flag");//获取flag
         }
@@ -62,20 +62,23 @@ public class EditActivity extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.refresh_edit);
         pic = findViewById(R.id.image_edit);
         toolbar = findViewById(R.id.edit_toolbar);//实例化toolbar
-        setSupportActionBar(toolbar);
         toolbartitle = toolbar.findViewById(R.id.title);
         toolbartitle.setText("编辑任务");//编辑标题
         editText1 = findViewById(R.id.editText1);
         editText2 = findViewById(R.id.editText2);//实例化editText
+        fab = findViewById(R.id.fab_save);//实例化悬浮窗
+
+        setSupportActionBar(toolbar);
         if (flag2 == 0x00000006){
             editText1.setText(bundle.getString("title"));
             editText2.setText(bundle.getString("text"));
         }
-        fab = findViewById(R.id.fab_save);//实例化悬浮窗
+
         ActionBar actionBar = getSupportActionBar();//获取actionBar
         if (actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);//将返回按钮显示出来
         }
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String backPic = prefs.getString("backPic",null);
         if (backPic  !=  null){
@@ -83,10 +86,10 @@ public class EditActivity extends AppCompatActivity {
         }else {
             loadBack();
         }
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {//刷新点击事件
             @Override
             public void onRefresh() {
-                RefreshImage();
+                RefreshImage();//刷新图片
             }
         });
         fab.setOnClickListener(new View.OnClickListener() {//悬浮窗点击事件
@@ -153,11 +156,11 @@ public class EditActivity extends AppCompatActivity {
                     plan2.setDate2(split[1]);//将yyyy-MM-dd HH:mm:ss 分块存储
                     plan2.save();
                 }
-                if (flag2 == 0x00000006){
+                if (flag2 == 0x00000006){//如果是修改数据
                     Plan2 plan2 = new Plan2();
                     plan2.setTitle(editText1.getText().toString());
                     plan2.setText(editText2.getText().toString());
-                    plan2.updateAll("title = ? and text = ?",bundle.getString("title"),bundle.getString("text"));
+                    plan2.updateAll("title = ? and text = ?",bundle.getString("title"),bundle.getString("text"));//更新数据
                     intent = new Intent(EditActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
@@ -176,7 +179,7 @@ public class EditActivity extends AppCompatActivity {
                 break;
         }return true;
     }
-    private void RefreshImage(){
+    private void RefreshImage(){//刷新图片
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -195,7 +198,7 @@ public class EditActivity extends AppCompatActivity {
             }
         }).start();
     }
-    private void loadBack(){
+    private void loadBack(){//加载图片
             String Bing ="http:guolin.tech/api/bing_pic";
             HttpUtil.sendOkHttpRequest(Bing, new Callback() {
                 @Override
@@ -215,7 +218,6 @@ public class EditActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Glide.with(EditActivity.this).load(bing).into(pic);
-                            Log.d("rrrrrrrrrrrrrr","rrrrrrrrrrrrrrrr");
                         }
                     });
                 }

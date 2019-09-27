@@ -1,5 +1,9 @@
 package com.tasklist.tasklist;
 
+
+//用来实现侧滑删除和上下移动Item功能
+
+
 public interface IItemTouchHelperAdapter {
 
     /**

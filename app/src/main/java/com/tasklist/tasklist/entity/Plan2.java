@@ -7,15 +7,15 @@ import org.litepal.crud.LitePalSupport;
 import java.util.Date;
 
 public class Plan2 extends LitePalSupport {
-    private int id;
-    private String text;
-    private String title;
-    private Boolean isCompleted;
-    private int year;
-    private int month;
-    private int day;
-    private String date1;
-    private String date2;
+    private int id;//数据id
+    private String text;//文本信息
+    private String title;//标题
+    private Boolean isCompleted;//是否完成
+    private int year;//年
+    private int month;//月
+    private int day;//日
+    private String date1;//yyyy-MM-dd
+    private String date2;//HH:mm:ss
     public void setDate1(String  date1){
         this.date1 = date1;
     }

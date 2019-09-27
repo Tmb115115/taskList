@@ -28,13 +28,15 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
-        ActivityCollector.addActivity(this);
-        toolbar = findViewById(R.id.Calendar_toolbar);
-        setSupportActionBar(toolbar);
-        title = (TextView)findViewById(R.id.Ctitle);
+        ActivityCollector.addActivity(this);//将活动添加到活动管理器
+        toolbar = findViewById(R.id.Calendar_toolbar);//实例化标题栏
+        title = (TextView)findViewById(R.id.Ctitle);//实例化标题
+        cv = (CalendarView)findViewById(R.id.calendarview);//实例化日历
+
         title.setText("日期选择");
-        cv = (CalendarView)findViewById(R.id.calendarview);
+        setSupportActionBar(toolbar);//建立标题栏
         ActionBar actionBar = getSupportActionBar();
+
         if (Build.VERSION.SDK_INT>=21){
             View decorView = getWindow().getDecorView();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
@@ -43,7 +45,7 @@ public class CalendarActivity extends AppCompatActivity {
         if (actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);//将返回按钮显示出来
         }
-        cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {//日历点击事件
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
@@ -51,7 +53,7 @@ public class CalendarActivity extends AppCompatActivity {
                 bundle.putInt("year",year);
                 bundle.putInt("month",month);
                 bundle.putInt("dayOfmonth",dayOfMonth);
-                bundle.putInt("flag",0x00000005);
+                bundle.putInt("flag",0x00000005);//存入数据
                 intent.putExtras(bundle);
                 startActivity(intent);
                 finish();
@@ -59,7 +61,7 @@ public class CalendarActivity extends AppCompatActivity {
         });
         }
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {//返回按钮
         switch (item.getItemId()){
             case android.R.id.home:
                 Intent intent = new Intent(CalendarActivity.this,MainActivity.class);

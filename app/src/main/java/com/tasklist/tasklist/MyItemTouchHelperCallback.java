@@ -3,6 +3,10 @@ package com.tasklist.tasklist;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+
+//用来实现侧滑删除功能
+
+
 public class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private IItemTouchHelperAdapter mAdapter;
