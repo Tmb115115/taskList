@@ -1,10 +1,14 @@
 package com.tasklist.tasklist;
 
 //导入包
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,8 +22,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
@@ -38,15 +45,17 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout; //侧滑栏
     private RecyclerView recyclerView;
     private List<Plan2> plan;
+    private List<Plan2> plan2;
     private Toolbar toolbar;
     private NavigationView navigationView;//侧滑栏
     private PlanAdapter2 adapter;//适配器
     private TextView title;//标题
     private TextView sum;//任务总数
-    private ImageView pic;//背景图片
+//    private ImageView pic;//背景图片
     private FloatingActionButton fabAdd;//悬浮窗
     private SwipeRefreshLayout swipeRefreshLayout;//刷新按钮
     private int flag = 0x00000000;//标记 ， 用于指定显示上面内容
+    private AlarmReceiver alarmReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);//将导航栏设置为透明
         }
         setContentView(R.layout.activity_main);
+//        alarmReceiver = new AlarmReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("com.tasklist.tasklist.ALARMRECEIVER");
+//        registerReceiver(alarmReceiver,intentFilter);
         ActivityCollector.addActivity(this);//将活动加入到活动管理器
         final Bundle bundle =getIntent().getExtras();//获取数据
         if (bundle !=null){
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
         title= (TextView)findViewById(R.id.title);//实例化标题
         sum = (TextView)findViewById(R.id.sum);//实例化总数
-        pic = (ImageView)findViewById(R.id.image);//实例化背景图片
+//        pic = (ImageView)findViewById(R.id.image);//实例化背景图片
         fabAdd =findViewById(R.id.fab_add);//实例化悬浮窗
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);//实例化刷新按钮
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -89,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             plan = LitePal.where("day = ? and month = ? and year = ?",str3,str2,str).find(Plan2.class);//按年月日查询数据 都要满足 用and
             String str4 = String.valueOf(plan.size());//获取plan数目
             sum.setText(str4);//总任务数
-            adapter = new PlanAdapter2(plan);
+            adapter = new PlanAdapter2(plan,getApplicationContext());
         }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {//刷新的点击事件
             @Override
@@ -99,11 +112,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         String backPic = prefs.getString("backPic",null);//从SharedPreferences文件获取数据
-        if (backPic  !=  null){
-            Glide.with(this).load(backPic).into(pic);//加载图片
-        }else {
-            loadBack();//加载图片
-        }
+//        if (backPic  !=  null){
+//            Glide.with(this).load(backPic).into(pic);//加载图片
+//        }else {
+//            loadBack();//加载图片
+//        }
 
 
 
@@ -201,28 +214,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void loadBack(){//从服务器获取图片
-        String Bing ="http:guolin.tech/api/bing_pic";//服务器网址
-        HttpUtil.sendOkHttpRequest(Bing, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {//如果失败了
-                e.printStackTrace();
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String bing = response.body().string();//将数据变为String
-                SharedPreferences.Editor editor =PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();//获取SharedPreferences.Editor对象
-                editor.putString("backPic",bing);//往文件中添加数据
-                editor.apply();//提交
-                runOnUiThread(new Runnable() {//涉及到UI新开线程
-                    @Override
-                    public void run() {
-                        Glide.with(MainActivity.this).load(bing).into(pic);//加载图片
-                    }
-                });
-            }
-        });
-    }
+//    private void loadBack(){//从服务器获取图片
+//        String Bing ="http:guolin.tech/api/bing_pic";//服务器网址
+//        HttpUtil.sendOkHttpRequest(Bing, new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {//如果失败了
+//                e.printStackTrace();
+//            }
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                final String bing = response.body().string();//将数据变为String
+//                SharedPreferences.Editor editor =PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();//获取SharedPreferences.Editor对象
+//                editor.putString("backPic",bing);//往文件中添加数据
+//                editor.apply();//提交
+//                runOnUiThread(new Runnable() {//涉及到UI新开线程
+//                    @Override
+//                    public void run() {
+//                        Glide.with(MainActivity.this).load(bing).into(pic);//加载图片
+//                    }
+//                });
+//            }
+//        });
+//    }
     private void refreshData(){//更新数据
         new Thread(new Runnable() {
             @Override
@@ -235,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        loadBack();//刷新图片
+//                        loadBack();//刷新图片
                         loadDate();//刷新数据
                         recyclerView.setAdapter(adapter);
                         swipeRefreshLayout.setRefreshing(false);//关闭按钮
@@ -253,9 +266,16 @@ public class MainActivity extends AppCompatActivity {
             String str2 = String.valueOf(calendar.get(Calendar.MONTH));//将int转化为String
             String str3 = String.valueOf(calendar.get(Calendar.YEAR));//将int转化为String
             plan = LitePal.where("year = ? and month = ? and Day <= ? and isCompleted = ?",str3,str2,str,"0").find(Plan2.class);//从数据库查找数据
+            plan2 = LitePal.where("month < ? and isCompleted = ?",str2,"0").find(Plan2.class);//上个月未完成的计划s
+            plan.addAll(plan2);
             String str4 = String.valueOf(plan.size());
             sum.setText(str4);//总任务数
-            adapter = new PlanAdapter2(plan);
+            adapter = new PlanAdapter2(plan,getApplicationContext());
+
+
+//            Intent intent = new Intent(this,RemindService.class);
+//            intent.putExtra("sum",plan.size());
+//            startService(intent);
         }
         if (flag ==0x00000001){ //如果是明天
             title.setText("明日计划");//标题
@@ -265,9 +285,10 @@ public class MainActivity extends AppCompatActivity {
             plan = LitePal.where("Day=?",str).find(Plan2.class);//在数据库查找
             String str4 = String.valueOf(plan.size());
             sum.setText(str4);//总任务数
-            adapter = new PlanAdapter2(plan);
+            adapter = new PlanAdapter2(plan,getApplicationContext());
         }
         if (flag ==0x00000002){ //如果是本月
+            fabAdd.setVisibility(View.GONE);//隐藏悬浮窗
             title.setText("本月计划");//标题
             Calendar calendar =Calendar.getInstance();//获取今天的日期
             calendar.add(Calendar.MONTH,1);//+1
@@ -276,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
             plan = LitePal.where("year = ? and month=?",str2,str).find(Plan2.class);//在数据库查找
             String str4 = String.valueOf(plan.size());
             sum.setText(str4);//总任务数
-            adapter = new PlanAdapter2(plan);
+            adapter = new PlanAdapter2(plan,getApplicationContext());
         }
         if (flag == 0x00000003){   //如果是已完成
             title.setText("已完成计划");//标题
@@ -284,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
             plan = LitePal.where("isCompleted = ?","1").find(Plan2.class);//查询数据
             String str4 = String.valueOf(plan.size());
             sum.setText(str4);//总任务数
-            adapter = new PlanAdapter2(plan);
+            adapter = new PlanAdapter2(plan,getApplicationContext());
         }
         if (flag == 0x00000004){ //如果是未完成
             title.setText("未完成计划");//标题
@@ -292,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
             plan = LitePal.where("isCompleted = ?","0").find(Plan2.class);//查询数据 true = 1 ，false = 0
             String str4 = String.valueOf(plan.size());
             sum.setText(str4);//总任务数
-            adapter = new PlanAdapter2(plan);
+            adapter = new PlanAdapter2(plan,getApplicationContext());
         }
 
 

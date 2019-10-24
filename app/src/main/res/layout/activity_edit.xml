@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
+        android:background="@mipmap/back222"
         />
     </android.support.v4.widget.SwipeRefreshLayout>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -63,6 +64,23 @@
             android:layout_below="@id/editText1"
             android:background="@null"
             android:textSize="20sp"
+            />
+        <TextView
+            android:id="@+id/time_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editText2"
+            />
+        <Button
+            android:id="@+id/btn_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="设置开始时间"
+            android:textColor="@color/secondary_text"
+            android:textSize="20sp"
+            android:layout_margin="20dp"
+            android:background="#00000000"
             />
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_save"

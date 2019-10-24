@@ -8,12 +8,15 @@ import java.util.Date;
 
 public class Plan2 extends LitePalSupport {
     private int id;//数据id
+    private int hour;//任务开始的时间
+    private int minute;
     private String text;//文本信息
     private String title;//标题
     private Boolean isCompleted;//是否完成
     private int year;//年
     private int month;//月
     private int day;//日
+    private int count;//用来删除闹钟
     private String date1;//yyyy-MM-dd
     private String date2;//HH:mm:ss
     public void setDate1(String  date1){
@@ -46,15 +49,12 @@ public class Plan2 extends LitePalSupport {
     public int getDay(){
         return  this.day;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public int getId() {
         return id;
     }
-
     public void setIsCompleted(Boolean isCompleted){
         this.isCompleted = isCompleted;
     }
@@ -73,4 +73,10 @@ public class Plan2 extends LitePalSupport {
     public String getTitle(){
         return title;
     }
+    public void setHour(int hour){this.hour = hour;}
+    public int getHour(){return hour;}
+    public void setMinute(int minute){this.minute = minute ;}
+    public int getMinute(){return  minute ;}
+    public void setCount(int count){this.count = count;}
+    public int getCount(){return count;}
 }

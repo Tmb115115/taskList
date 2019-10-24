@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="plan"></dbname>
-    <version value = "8"></version>
+    <version value = "10"></version>
     <list>
         <mapping class="com.tasklist.tasklist.entity.Plan2"></mapping>
     </list>

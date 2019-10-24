@@ -1,6 +1,8 @@
 package com.tasklist.tasklist.adapter;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tasklist.tasklist.AlarmReceiver;
 import com.tasklist.tasklist.EditActivity;
 import com.tasklist.tasklist.IItemTouchHelperAdapter;
 import com.tasklist.tasklist.MainActivity;
@@ -26,24 +29,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implements IItemTouchHelperAdapter {
-        private Context context;
+        private Context context ;
         private List<Plan2> plan;
         private int flag;
     private OnItemClickListener onItemClickListener;
-    public PlanAdapter2(List<Plan2> plan){
+    public PlanAdapter2(List<Plan2> plan,Context context){
         this.plan = plan;
+        this.context = context;
         }//获取数据
         public static class VH extends RecyclerView.ViewHolder{//实例化控件
             public final CheckBox checkBox;
             public final TextView title;
             public final TextView date;
             public final TextView time;
+            public final TextView start;
             private VH(View v){
                    super(v);
                    checkBox = v.findViewById(R.id.checkbox);
                    title = v.findViewById(R.id.text);
                    date = v.findViewById(R.id.tv_date);
                    time = v.findViewById(R.id.tv_time);
+                   start = v.findViewById(R.id.start_time);
             }
         }
 
@@ -51,6 +57,7 @@ public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implemen
         @Override
         public void onBindViewHolder(@NonNull final VH vh, final int i) {//加载数据
             LitePal.getDatabase();
+//            Log.d("PlanAdapter2.class",String.valueOf(plan.get(i).getCount()));
             vh.title.setText(plan.get(i).getTitle());//设置标题
             vh.checkBox.setChecked(plan.get(i).getIsCompleted());//设置checkbox
             vh.itemView.setOnClickListener(new View.OnClickListener() {//设置itemView点击事件
@@ -83,7 +90,20 @@ public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implemen
             String date1 = plan.get(i).getDate1();
             String date2 = plan.get(i).getDate2();
             vh.date.setText(date1);//年月日
-            vh.time.setText(date2);//时间
+            vh.time.setText(date2+"制定");//时间
+            //任务开始时间
+            if (plan.get(i).getHour() <10 && plan.get(i).getMinute() <10){//进行四种情况的判断
+            vh.start.setText("0"+String.valueOf(plan.get(i).getHour())+":"+"0"+String.valueOf(plan.get(i).getMinute())+"开始");
+            }
+            if (plan.get(i).getHour() <10 && plan.get(i).getMinute() > 10){
+                vh.start.setText("0"+String.valueOf(plan.get(i).getHour())+":"+String.valueOf(plan.get(i).getMinute())+"开始");
+            }
+            if (plan.get(i).getHour() >10 && plan.get(i).getMinute() <10){
+                vh.start.setText(String.valueOf(plan.get(i).getHour())+":"+"0"+String.valueOf(plan.get(i).getMinute())+"开始");
+            }
+            if (plan.get(i).getHour() >10 && plan.get(i).getMinute() >10) {
+                vh.start.setText(String.valueOf(plan.get(i).getHour())+":"+String.valueOf(plan.get(i).getMinute())+"开始");
+            }
         }
 
         @Override
@@ -110,9 +130,19 @@ public class PlanAdapter2 extends RecyclerView.Adapter<PlanAdapter2.VH> implemen
     @Override
 
     public void onItemDismiss(int position) {//侧滑删除Item
+
+        //删除闹钟
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,plan.get(position).getCount(),intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+
+
         LitePal.deleteAll(Plan2.class,"title = ?",plan.get(position).getTitle());//从数据库删除
         plan.remove(position);//从plan数组删除
         notifyItemRemoved(position);//更新
+
+
 
     }
     //定义点击接口

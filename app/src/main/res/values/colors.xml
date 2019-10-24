@@ -5,4 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
+    <color name="red">#CD0000</color>
+    <color name="yellow">#ffffcc</color>
+    <color name="yellow2">#CD950C</color>
+    <color name="brown">#8B5742</color>
 </resources>
